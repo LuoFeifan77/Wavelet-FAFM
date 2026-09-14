@@ -1,0 +1,70 @@
+# Run with:
+# docker compose -f scripts/docker/compose.yml up --build
+
+# after build images
+# run: 
+# • 现有 Compose 已配置 $PWD:/app 挂载。在项目根目录运行即可，宿主代码修改会立即反映到容器的 /app：
+  # cd /data/nvme0/luofeifan/world-action-models/FAFM
+  # docker compose -f scripts/docker/compose.yml up -d --no-build
+
+  # 进入容器：
+
+  # docker compose -f scripts/docker/compose.yml exec openpi_server bash
+
+  # 如果你想先进入开发环境、手动执行训练或推理，而不是自动启动服务，用：
+
+  # cd /data/nvme0/luofeifan/world-action-models/FAFM
+  # docker compose -f scripts/docker/compose.yml run --rm openpi_server bash
+
+  # 注意：文件会实时同步，但已经运行的 Python 进程不会自动重新加载代码。修改后需重新运行脚本；后台服务可执行：
+
+  # docker compose -f scripts/docker/compose.yml restart openpi_server
+
+
+#  cd /data/nvme0/luofeifan/world-action-models/FAFM
+#  docker compose -f scripts/docker/compose.yml run --rm openpi_server bash
+
+# 这个命令仍保留 GPU 和代码挂载，宿主修改会同步到 /app；退出 shell 后，该临时容器会被删除。
+
+#   要恢复后台推理服务，需要先修复重名配置：例如将第 1183 行的第二个配置改为：
+
+#   name="fafm05_libero_dct",
+
+#   两份配置参数不同，保留各自内容，仅赋予不同名称。然后重新启动并查看日志：
+
+#   docker compose -f scripts/docker/compose.yml up -d --no-build
+#   docker compose -f scripts/docker/compose.yml logs -f --tail=50 openpi_server
+
+#   代码已挂载，因此这项修改无需重建镜像。以上解决的是当前重名错误；后续模型权重加载是否成功，还需看启动日志。
+
+
+
+services:
+  openpi_server:
+    image: openpi_server
+    build:
+      context: ../..
+      dockerfile: scripts/docker/serve_policy.Dockerfile
+    init: true
+    tty: true
+    network_mode: host
+    # Populate configured openpi data home to /openpi_assets inside the container.
+    # Populate aws credential inside the container.
+    volumes:
+      - $PWD:/app
+      - /data/nvme0/luofeifan/data:/data
+      - /data/nvme0/luofeifan/world-action-models/libero_lerobot:/data/libero_lerobot
+      - ${OPENPI_DATA_HOME:-~/.cache/openpi}:/openpi_assets
+    environment:
+      - SERVER_ARGS
+      - OPENPI_DATA_HOME=/openpi_assets
+      - IS_DOCKER=true
+
+    # Comment out this block if not running on a machine with GPUs.
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 8
+              capabilities: [gpu]
