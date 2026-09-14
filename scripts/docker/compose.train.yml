@@ -1,0 +1,35 @@
+# Run from the repository root; see TRAINING.md in this directory.
+services:
+  training:
+    image: wavelet-fafm:train
+    build:
+      context: ../..
+      dockerfile: Dockerfile
+    container_name: fafm-8gpu
+    init: true
+    restart: always
+    command: ["sleep", "infinity"]
+    working_dir: /app
+    network_mode: host
+    shm_size: "16gb"
+    environment:
+      XLA_PYTHON_CLIENT_PREALLOCATE: "false"
+      OPENPI_DATA_HOME: /openpi_assets
+      SWANLAB_MODE: ${SWANLAB_MODE:-cloud}
+    volumes:
+      - ../..:/app
+      - ${FAFM_DATASET_DIR:?Set FAFM_DATASET_DIR to an absolute LeRobot dataset directory}:/data/libero_lerobot
+      - ${OPENPI_CACHE_DIR:-../../.cache/openpi}:/openpi_assets
+      - huggingface_cache:/root/.cache/huggingface
+      - jax_cache:/root/.cache/jax
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+
+volumes:
+  huggingface_cache:
+  jax_cache:

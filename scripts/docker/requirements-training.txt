@@ -1,0 +1,42 @@
+# SwanLab and its active Python 3.11 dependencies, captured from fafm-8gpu
+# on 2026-09-14. Install AFTER uv sync --frozen --no-dev.
+# The training container upgraded some shared dependencies (e.g. protobuf).
+# gemma_pytorch.py imports pytest at runtime; these versions match uv.lock.
+pytest==8.3.5
+iniconfig==2.1.0
+pluggy==1.6.0
+annotated-types==0.7.0
+certifi==2025.4.26
+charset-normalizer==3.4.2
+click==8.2.1
+idna==3.10
+Jinja2==3.1.6
+markdown-it-py==3.0.0
+MarkupSafe==3.0.2
+mdurl==0.1.2
+nvidia-ml-py==12.575.51
+orjson==3.12.0
+platformdirs==4.3.8
+prettytable==3.18.0
+protobuf==6.33.6
+psutil==7.0.0
+pwinput==1.0.3
+pydantic==2.11.5
+pydantic-settings==2.15.0
+pydantic_core==2.33.2
+pyecharts==2.1.0
+Pygments==2.19.1
+pyroaring==1.0.3
+python-dotenv==1.2.3
+PyYAML==6.0.2
+requests==2.32.3
+rich==14.0.0
+setuptools==80.9.0
+simplejson==3.20.1
+swanlab==0.10.0
+typing-inspection==0.4.1
+typing_extensions==4.13.2
+urllib3==2.4.0
+watchdog==6.0.0
+wcwidth==0.8.3
+wrapt==2.4.1

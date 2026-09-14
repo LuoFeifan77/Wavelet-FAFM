@@ -140,6 +140,10 @@ L_FAFM = L_FM + λ·L_vel  (λ = 1.0)
 
 FAFM is built based on the OpenPI framework. For installation instructions, please refer to the [OpenPI repository](https://github.com/Physical-Intelligence/openpi).
 
+To rebuild the GPU training environment on another server, use the root
+[`Dockerfile`](Dockerfile) and follow the
+[Docker training setup guide (中文)](scripts/docker/TRAINING.md).
+
 ## Training
 
 ### Standard LIBERO Training
